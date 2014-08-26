@@ -7,6 +7,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>Todo list</title>
+	<link rel="stylesheet" href="/css/todo.css">
 </head>
 <body>
 	<h1>TODO List</h1>
@@ -17,7 +18,7 @@
 	</ol>
 	<form method="POST">
 		<p><h2>New Items</h2>
-			<label><textarea id="added_items" name="added_items" placeholder="add item here"></textarea>Add Item</label></p>
+			<label for="added_items"><textarea id="added_items" name="added_items" placeholder="add item here"></textarea>Add Item</label></p>
 		<input type="submit">
 	</form>
 	

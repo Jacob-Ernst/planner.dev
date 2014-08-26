@@ -1,0 +1,26 @@
+h1{
+    color: #00FFFF; /* single line comment */
+    text-decoration: underline;
+}
+
+h2{
+    color: green; /* single line comment */
+    text-decoration: underline;
+}
+
+html{
+	background-color: #FEE;
+	background: url(/css/css_images/train_station.gif) no-repeat center center fixed;
+	background-size: cover;
+
+}
+
+body{
+	font-family: Futura, sans-serif; 
+}
+
+ol{
+	color: #FF0040;
+	list-style-type: katakana;
+
+}
