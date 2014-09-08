@@ -2,6 +2,7 @@
 	var_dump($_POST);
 	var_dump($_GET);
 ?>
+
 <!doctype html>
 <html>
 <head>
@@ -12,9 +13,12 @@
 <body>
 	<h1>TODO List</h1>
 	<ol>
-		<li>Be awesome</li>
-		<li>Keep being awesome</li>
-		<li>Win at life</li>
+		<?PHP
+			$items = ['Be awesome', 'Keep being awesome', 'Win at life'];
+			foreach ($items as $key => $value) {
+				echo "<li>$value</li>";
+			}
+		?>
 	</ol>
 	<form method="POST">
 		<p><h2>New Items</h2>
