@@ -21,7 +21,7 @@
  	$items = read_file(LISTITEMS); 
 	
 	if (isset($_POST['added_items'])) {
-		$items[] = $_POST['added_items'];
+		$items[] = htmlspecialchars(strip_tags($_POST['added_items']));
 		write_file(LISTITEMS, $items);
 	} 
 	
