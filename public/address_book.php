@@ -8,6 +8,12 @@ class AddressDataStore {
 
      public $filename = '';
      
+     function __construct($filename = FILENAME)
+    {
+        $this->filename = $filename;
+    }
+     
+     
      function read_address_book() {
         $handle = fopen($this->filename, 'r');
         
@@ -33,9 +39,6 @@ class AddressDataStore {
  }
 
 $address_table = new AddressDataStore();
-
-$address_table->filename = FILENAME;
-
 $address_book = $address_table->read_address_book();
 
 
@@ -78,6 +81,25 @@ if (
 }
 if (isset($_GET['remove_key'])) {
         unset($address_book[$_GET['remove_key']]);
+        $address_table->write_address_book($address_book);
+}
+
+
+if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
+        var_dump($_FILES);
+        // Set the destination directory for uploads
+        $upload_dir = '/vagrant/sites/planner.dev/public/uploads/';
+        // Grab the filename from the uploaded file by using basename
+        $filename = basename($_FILES['file1']['name']);
+        // Create the saved filename using the file's original name and our upload directory
+        $saved_filename = $upload_dir . $filename;
+        // Move the file from the temp location to our uploads directory
+        move_uploaded_file($_FILES['file1']['tmp_name'], $saved_filename);
+        
+        $newAds = new AddressDataStore($saved_filename);
+        
+        $upload_items = $newAds->read_address_book();
+        $address_book = array_merge($address_book, $upload_items);
         $address_table->write_address_book($address_book);
 }
 ?>
@@ -142,6 +164,15 @@ if (isset($_GET['remove_key'])) {
         <p><label for='phone1'></label>
         <input type="text" name="phone1" id='phone1' placeholder="phone"></p>
         <input type="submit" value="Add">    
+    </form>
+    <form method="POST" enctype="multipart/form-data">
+        <p>
+            <label for="file1">File to upload: </label>
+            <input type="file" id="file1" name="file1">
+        </p>
+        <p>
+            <input type="submit" value="Upload">
+        </p>
     </form>
 </body>
 </html>
