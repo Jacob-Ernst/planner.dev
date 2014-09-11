@@ -2,39 +2,83 @@
 
 define('FILENAME', 'data/address_book.csv');
 
+$address_book = [];
 
-$address_book = [
-    ['The White House', '1600 Pennsylvania Avenue NW', 'Washington', 'DC', '20500', '63456'],
-    ['Marvel Comics', 'P.O. Box 1527', 'Long Island City', 'NY', '11101', '56464'],
-    ['LucasArts', 'P.O. Box 29901', 'San Francisco', 'CA', '94129-0901', '290438409'],
-];
+class AddressDataStore {
+
+     public $filename = '';
+     
+     function read_address_book() {
+        $handle = fopen($this->filename, 'r');
+        
+        $address_book = [];
+        while (!feof($handle)) {
+            $row = fgetcsv($handle);
+            if (!empty($row)) {
+                $address_book[] = $row;
+            }
+        }
+        
+        fclose($handle);
+        return $address_book;
+    }
+
+    function write_address_book($array) {
+            $handle = fopen($this->filename, 'w');
+            foreach ($array as $fields) {
+                fputcsv($handle, $fields);
+            }
+            fclose($handle);
+    }
+ }
+
+$address_table = new AddressDataStore();
+
+$address_table->filename = FILENAME;
+
+$address_book = $address_table->read_address_book();
+
+
 // if (isset($_POST['added_items'])) {
 //         $items[] = htmlspecialchars(strip_tags($_POST['added_items']));
-//         write_file(LISTITEMS, $items);
+//         write_address_book(LISTITEMS, $items);
 //     }
 // foreach ($address_book as $fields) {
 //     fputcsv($handle, $fields);
 // }
-function write_file($filename, $array) {
-        $handle = fopen($filename, 'w');
-        foreach ($array as $fields) {
-            fputcsv($handle, $fields);
-        }
-        fclose($filename);
+
+function format_phone($value){
+    $output_phone = '(' . substr($value, 0 , 3 ) . ')' . '-' . substr($value, 3 , 3 ) . '-' . substr($value, 6 , 4 );
+    return $output_phone;
 }
-        
-if (!empty($_POST)) {
+     
+if (
+    !empty($_POST) &&
+    !empty($_POST['name1']) &&
+    !empty($_POST['address1']) &&
+    !empty($_POST['city1']) &&
+    !empty($_POST['state1']) &&
+    !empty($_POST['zip1'])
+) {
     var_dump($_POST);
+
+    
+    $usable_phone = preg_replace('/(\d{3})\D*(\d{3})\D*(\d{4})/', '$1$2$3', $_POST['phone1']);
+    
     $new_values = [
         $_POST['name1'],
         $_POST['address1'], 
         $_POST['city1'],
         $_POST['state1'],
         $_POST['zip1'],
-        $_POST['phone1']
+        $usable_phone
     ];
     $address_book[] = $new_values;
-    write_file(FILENAME, $address_book);
+    $address_table->write_address_book($address_book);
+}
+if (isset($_GET['remove_key'])) {
+        unset($address_book[$_GET['remove_key']]);
+        $address_table->write_address_book($address_book);
 }
 ?>
 <html>
@@ -61,12 +105,24 @@ if (!empty($_POST)) {
                 <th>state</th>
                 <th>zip</th>
                 <th>phone</th>
+                <th>Remove</th>
             </tr>
             
             <?PHP foreach ($address_book as $key => $address_array):?>
-                    <tr><?php foreach ($address_array as $key => $value):?>
-                            <td><?=$value?></td>
-                        <?php endforeach;?></tr>
+                <tr>
+                    <?php foreach ($address_array as $num => $value):?>
+                        <?php 
+                            if ($num == 5){
+                               $value = format_phone($value);
+                            }
+                        ?>
+                        <td><?=$value?></td>
+                    <?php endforeach;?>
+                    <?php if (count($address_array) == 5 ):?>
+                            <td></td>
+                    <?php endif;?>
+                    <td><a href="?remove_key=<?=$key?>">Remove</a></td>
+                </tr>
             <?PHP endforeach;?>
         </table>
     </div>
