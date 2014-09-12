@@ -4,51 +4,10 @@ define('FILENAME', 'data/address_book.csv');
 
 $address_book = [];
 
-class AddressDataStore {
-
-     public $filename = '';
-     
-     function __construct($filename = FILENAME)
-    {
-        $this->filename = $filename;
-    }
-     
-     
-     function read_address_book() {
-        $handle = fopen($this->filename, 'r');
-        
-        $address_book = [];
-        while (!feof($handle)) {
-            $row = fgetcsv($handle);
-            if (!empty($row)) {
-                $address_book[] = $row;
-            }
-        }
-        
-        fclose($handle);
-        return $address_book;
-    }
-
-    function write_address_book($array) {
-            $handle = fopen($this->filename, 'w');
-            foreach ($array as $fields) {
-                fputcsv($handle, $fields);
-            }
-            fclose($handle);
-    }
- }
+require_once 'class/address_data_store.php';
 
 $address_table = new AddressDataStore();
 $address_book = $address_table->read_address_book();
-
-
-// if (isset($_POST['added_items'])) {
-//         $items[] = htmlspecialchars(strip_tags($_POST['added_items']));
-//         write_address_book(LISTITEMS, $items);
-//     }
-// foreach ($address_book as $fields) {
-//     fputcsv($handle, $fields);
-// }
 
 function format_phone($value){
     $output_phone = '(' . substr($value, 0 , 3 ) . ')' . '-' . substr($value, 3 , 3 ) . '-' . substr($value, 6 , 4 );
@@ -63,11 +22,7 @@ if (
     !empty($_POST['state1']) &&
     !empty($_POST['zip1'])
 ) {
-    var_dump($_POST);
-
-    
-    $usable_phone = preg_replace('/(\d{3})\D*(\d{3})\D*(\d{4})/', '$1$2$3', $_POST['phone1']);
-    
+    $usable_phone = preg_replace('/\D(\d{3})\D*(\d{3})\D*(\d{4})/', '$1$2$3', $_POST['phone1']);
     $new_values = [
         $_POST['name1'],
         $_POST['address1'], 
@@ -83,10 +38,7 @@ if (isset($_GET['remove_key'])) {
         unset($address_book[$_GET['remove_key']]);
         $address_table->write_address_book($address_book);
 }
-
-
 if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
-        var_dump($_FILES);
         // Set the destination directory for uploads
         $upload_dir = '/vagrant/sites/planner.dev/public/uploads/';
         // Grab the filename from the uploaded file by using basename
@@ -148,8 +100,8 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
             <?PHP endforeach;?>
         </table>
     </div>
-    
-    <form method="POST">
+    <div class='container'>
+    <form method="POST" action='address_book.php'>
         <h2>New addresses</h2>
         <p><label for="name1"></label>
         <input type="text" name="name1" id="name1" placeholder="name"></p>
@@ -165,6 +117,8 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
         <input type="text" name="phone1" id='phone1' placeholder="phone"></p>
         <input type="submit" value="Add">    
     </form>
+    </div>
+    <div class='container'>
     <form method="POST" enctype="multipart/form-data">
         <p>
             <label for="file1">File to upload: </label>
@@ -174,5 +128,6 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
             <input type="submit" value="Upload">
         </p>
     </form>
+    </div>
 </body>
 </html>
