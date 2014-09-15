@@ -10,7 +10,12 @@ $address_table = new AddressDataStore();
 $address_book = $address_table->read_address_book();
 
 function format_phone($value){
-    $output_phone = '(' . substr($value, 0 , 3 ) . ')' . '-' . substr($value, 3 , 3 ) . '-' . substr($value, 6 , 4 );
+    if(!empty($value)){
+        $output_phone = '(' . substr($value, 0 , 3 ) . ')' . '-' . substr($value, 3 , 3 ) . '-' . substr($value, 6 , 4 );
+    }
+    else{
+        $output_phone = '';
+    }
     return $output_phone;
 }
      
