@@ -27,7 +27,7 @@ if (
     !empty($_POST['state1']) &&
     !empty($_POST['zip1'])
 ) {
-    $usable_phone = preg_replace('/\D(\d{3})\D*(\d{3})\D*(\d{4})/', '$1$2$3', $_POST['phone1']);
+    $usable_phone = preg_replace('/\D*(\d{3})\D*(\d{3})\D*(\d{4})/', '$1$2$3', $_POST['phone1']);
     $new_values = [
         $_POST['name1'],
         $_POST['address1'], 
@@ -87,7 +87,7 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
                 <th>Remove</th>
             </tr>
             
-            <?PHP foreach ($address_book as $key => $address_array):?>
+            <?php foreach ($address_book as $key => $address_array):?>
                 <tr>
                     <?php foreach ($address_array as $num => $value):?>
                         <?php 
@@ -102,7 +102,7 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
                     <?php endif;?>
                     <td><a href="?remove_key=<?=$key?>">Remove</a></td>
                 </tr>
-            <?PHP endforeach;?>
+            <?php endforeach;?>
         </table>
     </div>
     <div class='container'>
