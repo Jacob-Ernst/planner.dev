@@ -40,10 +40,11 @@ $number = $count->fetchColumn();
                             <?=$parkInfo['location']?>
                         </td>
                         <td>
-                            <?=$parkInfo['area_in_acres']?>
+                            <?=number_format($parkInfo['area_in_acres'], 2)?>
                         </td>
                         <td>
-                            <?=$parkInfo['date_established']?>
+                            <?php $date = new DateTime($parkInfo['date_established']);
+                                 echo $date->format('l, j F Y');?>
                         </td>
                 </tr>
             <?php endforeach;?>
@@ -54,7 +55,7 @@ $number = $count->fetchColumn();
         <?php if($offset != 0):?>
             <li class="previous"><a href="?offset=<?=$offset-4?>" class='btn'>Previous</a></li>
         <?php endif;?>
-        <?php if($offset + 4 <= $number):?>
+        <?php if($offset + 4 < $number):?>
             <li class="next"><a href="?offset=<?=$offset + 4?>" class='btn'>Next</a></li>
         <?php endif;?>
     </ul>
