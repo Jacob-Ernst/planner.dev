@@ -1,13 +1,31 @@
 <?php
 
 define('FILENAME', 'data/address_book.csv');
+require_once '../inc/filestore.php';
+
+class AddressDataStore extends Filestore {
+
+     function read_address_book()
+     {
+         // TODO: refactor to use new $this->read_csv() method
+        return $thing = $this->read_csv();
+     }
+
+     function write_address_book($addresses_array)
+     {
+         // TODO: refactor to use new write_csv() method
+        $this->write_csv($addresses_array);
+     }
+
+ }
+
 
 $address_book = [];
 
-require_once 'class/address_data_store.php';
 
-$address_table = new AddressDataStore();
+$address_table = new AddressDataStore(FILENAME);
 $address_book = $address_table->read_address_book();
+var_dump($address_book);
 
 function format_phone($value){
     if(!empty($value)){

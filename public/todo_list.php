@@ -1,53 +1,35 @@
 <?PHP
-	define('LISTITEMS', 'data/list.txt');
-	function read_file($filename) {
-	    $handle = fopen($filename, "r");
-	    $contents = trim(fread($handle, filesize($filename)));
-	    $contents_array = explode("\n", $contents);
-	    fclose($handle);
-	    return $contents_array;
- 	}
- 	
-	function write_file($filename, $array) {
-	    $handle = fopen($filename, "w");
-        foreach ($array as $value) {
-            fwrite($handle, $value . PHP_EOL);
-        }
-        fclose($handle);
-    }
-	
-	
-	
- 	$items = read_file(LISTITEMS); 
-	
-	if (isset($_POST['added_items'])) {
-		$items[] = htmlspecialchars(strip_tags($_POST['added_items']));
-		write_file(LISTITEMS, $items);
-	} 
-	
-	if (isset($_GET['remove_key'])) {
-		unset($items[$_GET['remove_key']]);
-		write_file(LISTITEMS, $items);
-	} 
-	if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK && $_FILES['file1']['type'] == 'text/plain') {
-        // Set the destination directory for uploads
-        $upload_dir = '/vagrant/sites/planner.dev/public/uploads/';
-        // Grab the filename from the uploaded file by using basename
-        $filename = basename($_FILES['file1']['name']);
-        // Create the saved filename using the file's original name and our upload directory
-        $saved_filename = $upload_dir . $filename;
-        // Move the file from the temp location to our uploads directory
-        move_uploaded_file($_FILES['file1']['tmp_name'], $saved_filename);
-        $upload_items = read_file("uploads/" . $filename);
-        $items = array_merge($items, $upload_items);
-        write_file(LISTITEMS, $items);
-    }
+define('LISTITEMS', 'data/list.txt');
+
+require_once '../inc/filestore.php';
+
+$list_store = new Filestore(LISTITEMS);
+
     
-    var_dump($_FILES);
-    
-    // Check if we saved a file
-	var_dump($_POST);
-	var_dump($_GET);
+$items = $list_store->read_lines(); 
+
+if (isset($_POST['added_items'])) {
+	$items[] = htmlspecialchars(strip_tags($_POST['added_items']));
+	$list_store->write_lines($items);
+} 
+
+if (isset($_GET['remove_key'])) {
+	unset($items[$_GET['remove_key']]);
+	$list_store->write_lines($items);
+} 
+if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK && $_FILES['file1']['type'] == 'text/plain') {
+    // Set the destination directory for uploads
+    $upload_dir = '/vagrant/sites/planner.dev/public/uploads/';
+    // Grab the filename from the uploaded file by using basename
+    $filename = basename($_FILES['file1']['name']);
+    // Create the saved filename using the file's original name and our upload directory
+    $saved_filename = $upload_dir . $filename;
+    // Move the file from the temp location to our uploads directory
+    move_uploaded_file($_FILES['file1']['tmp_name'], $saved_filename);
+    $upload_items = $list_store->read_lines("uploads/" . $filename);
+    $items = array_merge($items, $upload_items);
+    $list_store->write_lines($items);
+}
 ?>
 
 <!doctype html>
