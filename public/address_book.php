@@ -42,19 +42,25 @@ function format_phone($value){
      
 if (
     !empty($_POST) &&
-    !empty($_POST['name1']) &&
-    !empty($_POST['address1']) &&
-    !empty($_POST['city1']) &&
-    !empty($_POST['state1']) &&
-    !empty($_POST['zip1'])
+    !empty($_POST['name']) &&
+    !empty($_POST['address']) &&
+    !empty($_POST['city']) &&
+    !empty($_POST['state']) &&
+    !empty($_POST['zip'])
 ) {
-    $usable_phone = preg_replace('/\D*(\d{3})\D*(\d{3})\D*(\d{4})/', '$1$2$3', $_POST['phone1']);
+    foreach ($_POST as $key => $value) {
+        if (strlen($value) > 125) {
+            throw new Exception('A string under 125 characters is required for ' . $key);
+        }
+    }
+
+    $usable_phone = preg_replace('/\D*(\d{3})\D*(\d{3})\D*(\d{4})/', '$1$2$3', $_POST['phone']);
     $new_values = [
-        $_POST['name1'],
-        $_POST['address1'], 
-        $_POST['city1'],
-        $_POST['state1'],
-        $_POST['zip1'],
+        $_POST['name'],
+        $_POST['address'], 
+        $_POST['city'],
+        $_POST['state'],
+        $_POST['zip'],
         $usable_phone
     ];
     $address_book[] = $new_values;
@@ -129,18 +135,18 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
     <div class='container'>
     <form method="POST" action='address_book.php'>
         <h2>New addresses</h2>
-        <p><label for="name1"></label>
-        <input type="text" name="name1" id="name1" placeholder="name"></p>
-        <p><label for='address1'></label>
-        <input type="text" name="address1" id='address1' placeholder="address"></p>
-        <p><label for='city1'></label>
-        <input type="text" name="city1" id='city1' placeholder="city"></p>
-        <p><label for='state1'></label>
-        <input type="text" name="state1" id='state1' placeholder="state"></p>
-        <p><label for='zip1'></label>
-        <input type="text" name="zip1" id='zip1' placeholder="zip"></p>
-        <p><label for='phone1'></label>
-        <input type="text" name="phone1" id='phone1' placeholder="phone"></p>
+        <p><label for="name"></label>
+        <input type="text" name="name" id="name" placeholder="name"></p>
+        <p><label for='address'></label>
+        <input type="text" name="address" id='address' placeholder="address"></p>
+        <p><label for='city'></label>
+        <input type="text" name="city" id='city' placeholder="city"></p>
+        <p><label for='state'></label>
+        <input type="text" name="state" id='state' placeholder="state"></p>
+        <p><label for='zip'></label>
+        <input type="text" name="zip" id='zip' placeholder="zip"></p>
+        <p><label for='phone'></label>
+        <input type="text" name="phone" id='phone' placeholder="phone"></p>
         <input type="submit" value="Add">    
     </form>
     </div>

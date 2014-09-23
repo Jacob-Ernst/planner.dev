@@ -9,8 +9,13 @@ $list_store = new Filestore(LISTITEMS);
 $items = $list_store->read(); 
 
 if (isset($_POST['added_items'])) {
-	$items[] = htmlspecialchars(strip_tags($_POST['added_items']));
-	$list_store->write($items);
+    if (!empty($_POST['added_items']) && strlen($_POST['added_items']) <= 240 ){
+    	$items[] = htmlspecialchars(strip_tags($_POST['added_items']));
+    	$list_store->write($items);
+    }
+    else {
+        throw new Exception('Not a string under 240 characters!');
+    }
 } 
 
 if (isset($_GET['remove_key'])) {
