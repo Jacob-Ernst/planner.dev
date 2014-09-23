@@ -5,17 +5,21 @@ require_once '../inc/filestore.php';
 
 class AddressDataStore extends Filestore {
 
-     function read_address_book()
-     {
-         // TODO: refactor to use new $this->read_csv() method
-        return $thing = $this->read_csv();
+     function __construct($filename){
+       parent::__construct(strtolower($filename));
      }
+     
+     // function read_address_book()
+     // {
+     //     // TODO: refactor to use new $this->read_csv() method
+     //    return $this->read_csv();
+     // }
 
-     function write_address_book($addresses_array)
-     {
-         // TODO: refactor to use new write_csv() method
-        $this->write_csv($addresses_array);
-     }
+     // function write_address_book($addresses_array)
+     // {
+     //     // TODO: refactor to use new write_csv() method
+     //    $this->write_csv($addresses_array);
+     // }
 
  }
 
@@ -24,8 +28,7 @@ $address_book = [];
 
 
 $address_table = new AddressDataStore(FILENAME);
-$address_book = $address_table->read_address_book();
-var_dump($address_book);
+$address_book = $address_table->read();
 
 function format_phone($value){
     if(!empty($value)){
@@ -55,11 +58,11 @@ if (
         $usable_phone
     ];
     $address_book[] = $new_values;
-    $address_table->write_address_book($address_book);
+    $address_table->write($address_book);
 }
 if (isset($_GET['remove_key'])) {
         unset($address_book[$_GET['remove_key']]);
-        $address_table->write_address_book($address_book);
+        $address_table->write($address_book);
 }
 if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
         // Set the destination directory for uploads
@@ -73,9 +76,9 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
         
         $newAds = new AddressDataStore($saved_filename);
         
-        $upload_items = $newAds->read_address_book();
+        $upload_items = $newAds->read();
         $address_book = array_merge($address_book, $upload_items);
-        $address_table->write_address_book($address_book);
+        $address_table->write($address_book);
 }
 ?>
 <html>
@@ -94,7 +97,7 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
     </div>
     
     <div class="container">
-        <table class="table">
+        <table class="table table-striped">
             <tr>
                 <th>name</th>
                 <th>address</th>

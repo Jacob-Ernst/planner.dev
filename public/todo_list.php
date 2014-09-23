@@ -6,16 +6,16 @@ require_once '../inc/filestore.php';
 $list_store = new Filestore(LISTITEMS);
 
     
-$items = $list_store->read_lines(); 
+$items = $list_store->read(); 
 
 if (isset($_POST['added_items'])) {
 	$items[] = htmlspecialchars(strip_tags($_POST['added_items']));
-	$list_store->write_lines($items);
+	$list_store->write($items);
 } 
 
 if (isset($_GET['remove_key'])) {
 	unset($items[$_GET['remove_key']]);
-	$list_store->write_lines($items);
+	$list_store->write($items);
 } 
 if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK && $_FILES['file1']['type'] == 'text/plain') {
     // Set the destination directory for uploads
@@ -26,9 +26,9 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK && $_FILES[
     $saved_filename = $upload_dir . $filename;
     // Move the file from the temp location to our uploads directory
     move_uploaded_file($_FILES['file1']['tmp_name'], $saved_filename);
-    $upload_items = $list_store->read_lines("uploads/" . $filename);
+    $upload_items = $list_store->read("uploads/" . $filename);
     $items = array_merge($items, $upload_items);
-    $list_store->write_lines($items);
+    $list_store->write($items);
 }
 ?>
 
