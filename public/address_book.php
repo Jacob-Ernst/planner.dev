@@ -40,32 +40,30 @@ function format_phone($value){
     return $output_phone;
 }
      
-if (
-    !empty($_POST) &&
-    !empty($_POST['name']) &&
-    !empty($_POST['address']) &&
-    !empty($_POST['city']) &&
-    !empty($_POST['state']) &&
-    !empty($_POST['zip'])
-) {
-    foreach ($_POST as $key => $value) {
-        if (strlen($value) > 125) {
-            throw new Exception('A string under 125 characters is required for ' . $key);
+if (!empty($_POST)) {
+        try {
+            foreach ($_POST as $key => $value) {
+                if (empty($value) || strlen($value) > 125) {
+                    throw new Exception('A string under 125 characters is required for ' . $key);
+                }
+            }
+            $usable_phone = preg_replace('/\D*(\d{3})\D*(\d{3})\D*(\d{4})/', '$1$2$3', $_POST['phone']);
+            $new_values = [
+                $_POST['name'],
+                $_POST['address'], 
+                $_POST['city'],
+                $_POST['state'],
+                $_POST['zip'],
+                $usable_phone
+            ];
+            $address_book[] = $new_values;
+            $address_table->write($address_book);
+        } 
+        catch (Exception $e) {
+           $errorMessage = $e->getMessage();
         }
-    }
-
-    $usable_phone = preg_replace('/\D*(\d{3})\D*(\d{3})\D*(\d{4})/', '$1$2$3', $_POST['phone']);
-    $new_values = [
-        $_POST['name'],
-        $_POST['address'], 
-        $_POST['city'],
-        $_POST['state'],
-        $_POST['zip'],
-        $usable_phone
-    ];
-    $address_book[] = $new_values;
-    $address_table->write($address_book);
-}
+ }
+  
 if (isset($_GET['remove_key'])) {
         unset($address_book[$_GET['remove_key']]);
         $address_table->write($address_book);
@@ -96,6 +94,9 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK) {
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+    <?php if (isset($errorMessage)):?>
+    <h2><?=$errorMessage?></h2>
+    <?php endif;?>
     <div class='container'>
         <div class="jumbotron">
             <h1>Addresses</h1>

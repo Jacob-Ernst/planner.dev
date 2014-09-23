@@ -9,12 +9,18 @@ $list_store = new Filestore(LISTITEMS);
 $items = $list_store->read(); 
 
 if (isset($_POST['added_items'])) {
-    if (!empty($_POST['added_items']) && strlen($_POST['added_items']) <= 240 ){
-    	$items[] = htmlspecialchars(strip_tags($_POST['added_items']));
-    	$list_store->write($items);
-    }
-    else {
-        throw new Exception('Not a string under 240 characters!');
+    try {
+        if (empty($_POST['added_items'])){
+            throw new Exception('Values must be provided for all fields');
+        }
+        if (strlen($_POST['added_items']) > 240 ) {
+            throw new Exception('Item is longer than 240 characters');
+        }
+        
+        $items[] = htmlspecialchars(strip_tags($_POST['added_items']));
+        $list_store->write($items);
+    } catch (Exception $e) {
+        $errorMessage = $e->getMessage();
     }
 } 
 
@@ -46,8 +52,10 @@ if (count($_FILES) > 0 && $_FILES['file1']['error'] == UPLOAD_ERR_OK && $_FILES[
 </head>
 <body>
 	<h1>TODO List</h1>
+    <?php if (isset($errorMessage)):?>
+    <h2><?=$errorMessage?></h2>
+    <? endif;?>
 	<ol>
-		
 		<?PHP  if (isset($saved_filename)):?>
 		    <p>You can download your file <a href='/uploads/<?=$filename?>'>here</a>.</p>
 		<?PHP endif; ?>
