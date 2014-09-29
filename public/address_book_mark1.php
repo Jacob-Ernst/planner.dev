@@ -33,11 +33,11 @@ $formatted_phone = '';
 
 try {
     if (
-        !empty($_POST['name']) ||
-        !empty($_POST['address']) ||
-        !empty($_POST['city']) ||
-        !empty($_POST['state']) ||
-        !empty($_POST['zip']) ||
+        !empty($_POST['name']) &&
+        !empty($_POST['address']) &&
+        !empty($_POST['city']) &&
+        !empty($_POST['state']) &&
+        !empty($_POST['zip']) &&
         !empty($_POST['phone']) 
     ) 
     {
