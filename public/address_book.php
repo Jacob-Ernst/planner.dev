@@ -8,21 +8,10 @@ class AddressDataStore extends Filestore {
      function __construct($filename){
        parent::__construct(strtolower($filename));
      }
-     
-     // function read_address_book()
-     // {
-     //     // TODO: refactor to use new $this->read_csv() method
-     //    return $this->read_csv();
-     // }
-
-     // function write_address_book($addresses_array)
-     // {
-     //     // TODO: refactor to use new write_csv() method
-     //    $this->write_csv($addresses_array);
-     // }
-
  }
-
+class InvalidInputException extends Exception{
+    
+}
 
 $address_book = [];
 
@@ -44,7 +33,7 @@ if (!empty($_POST)) {
         try {
             foreach ($_POST as $key => $value) {
                 if (empty($value) || strlen($value) > 125) {
-                    throw new Exception('A string under 125 characters is required for ' . $key);
+                    throw new InvalidInputException('A string under 125 characters is required for ' . $key);
                 }
             }
             $usable_phone = preg_replace('/\D*(\d{3})\D*(\d{3})\D*(\d{4})/', '$1$2$3', $_POST['phone']);
@@ -59,7 +48,7 @@ if (!empty($_POST)) {
             $address_book[] = $new_values;
             $address_table->write($address_book);
         } 
-        catch (Exception $e) {
+        catch (InvalidInputException $e) {
            $errorMessage = $e->getMessage();
         }
  }

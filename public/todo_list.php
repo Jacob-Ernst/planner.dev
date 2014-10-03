@@ -5,21 +5,24 @@ require_once '../inc/filestore.php';
 
 $list_store = new Filestore(LISTITEMS);
 
+class InvalidInputException extends Exception{
     
+}
+  
 $items = $list_store->read(); 
 
 if (isset($_POST['added_items'])) {
     try {
         if (empty($_POST['added_items'])){
-            throw new Exception('Values must be provided for all fields');
+            throw new InvalidInputException('Values must be provided for all fields');
         }
         if (strlen($_POST['added_items']) > 240 ) {
-            throw new Exception('Item is longer than 240 characters');
+            throw new InvalidInputException('Item is longer than 240 characters');
         }
         
         $items[] = htmlspecialchars(strip_tags($_POST['added_items']));
         $list_store->write($items);
-    } catch (Exception $e) {
+    } catch (InvalidInputException $e) {
         $errorMessage = $e->getMessage();
     }
 } 
